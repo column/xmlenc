@@ -1,4 +1,4 @@
-module github.com/column/xmlen
+module github.com/column/xmlenc
 
 go 1.20
 
