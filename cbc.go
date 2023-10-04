@@ -6,8 +6,6 @@ import (
 	"crypto/des" // nolint: gas
 	"encoding/base64"
 	"errors"
-	"fmt"
-
 	"github.com/beevik/etree"
 )
 
@@ -47,13 +45,7 @@ func (e CBC) Encrypt(key interface{}, plaintext []byte, _ []byte) (*etree.Elemen
 
 	encryptedDataEl := etree.NewElement("xenc:EncryptedData")
 	encryptedDataEl.CreateAttr("xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#")
-	{
-		randBuf := make([]byte, 16)
-		if _, err := RandReader.Read(randBuf); err != nil {
-			return nil, err
-		}
-		encryptedDataEl.CreateAttr("Id", fmt.Sprintf("_%x", randBuf))
-	}
+	encryptedDataEl.CreateAttr("Type", "http://www.w3.org/2001/04/xmlenc#Element")
 
 	em := encryptedDataEl.CreateElement("xenc:EncryptionMethod")
 	em.CreateAttr("Algorithm", e.algorithm)
