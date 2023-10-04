@@ -5,7 +5,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"io"
 
 	"github.com/beevik/etree"
@@ -46,13 +45,7 @@ func (e GCM) Encrypt(key interface{}, plaintext []byte, nonce []byte) (*etree.El
 
 	encryptedDataEl := etree.NewElement("xenc:EncryptedData")
 	encryptedDataEl.CreateAttr("xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#")
-	{
-		randBuf := make([]byte, 16)
-		if _, err := RandReader.Read(randBuf); err != nil {
-			return nil, err
-		}
-		encryptedDataEl.CreateAttr("Id", fmt.Sprintf("_%x", randBuf))
-	}
+	encryptedDataEl.CreateAttr("Type", "http://www.w3.org/2001/04/xmlenc#Element")
 
 	em := encryptedDataEl.CreateElement("xenc:EncryptionMethod")
 	em.CreateAttr("Algorithm", e.algorithm)

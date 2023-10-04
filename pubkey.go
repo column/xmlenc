@@ -4,8 +4,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
-	"fmt"
-
 	"github.com/beevik/etree"
 )
 
@@ -50,13 +48,6 @@ func (e RSA) Encrypt(certificate interface{}, plaintext []byte, nonce []byte) (*
 	keyInfoEl.CreateAttr("xmlns:ds", "http://www.w3.org/2000/09/xmldsig#")
 
 	encryptedKey := keyInfoEl.CreateElement("xenc:EncryptedKey")
-	{
-		randBuf := make([]byte, 16)
-		if _, err := RandReader.Read(randBuf); err != nil {
-			return nil, err
-		}
-		encryptedKey.CreateAttr("Id", fmt.Sprintf("_%x", randBuf))
-	}
 	encryptedKey.CreateAttr("xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#")
 
 	encryptionMethodEl := encryptedKey.CreateElement("xenc:EncryptionMethod")
@@ -66,13 +57,6 @@ func (e RSA) Encrypt(certificate interface{}, plaintext []byte, nonce []byte) (*
 		dm := encryptionMethodEl.CreateElement("ds:DigestMethod")
 		dm.CreateAttr("Algorithm", e.DigestMethod.Algorithm())
 		dm.CreateAttr("xmlns:ds", "http://www.w3.org/2000/09/xmldsig#")
-	}
-	{
-		innerKeyInfoEl := encryptedKey.CreateElement("ds:KeyInfo")
-		x509data := innerKeyInfoEl.CreateElement("ds:X509Data")
-		x509data.CreateElement("ds:X509Certificate").SetText(
-			base64.StdEncoding.EncodeToString(cert.Raw),
-		)
 	}
 
 	buf, err := e.keyEncrypter(e, pubKey, key)
