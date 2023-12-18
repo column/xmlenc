@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/beevik/etree v1.2.0
-	golang.org/x/crypto v0.13.0
+	golang.org/x/crypto v0.17.0
 	gotest.tools v2.2.0+incompatible
 )
 
